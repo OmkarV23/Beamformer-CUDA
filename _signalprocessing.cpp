@@ -206,10 +206,12 @@ std::vector<std::complex<double>> match_filter(const std::vector<std::complex<do
     // FFT of the padded LFM signal
     std::vector<std::complex<double>> t_fft = fft(lfm_signal_padded);
 
+    std::vector<std::complex<double>> x_hilbert_fft = fft(x_hilbert);
+
     // Compute the inverse FFT of the product of FFTs (match filtering)
     std::vector<std::complex<double>> x_analytic_fft(n);
     for (int i = 0; i < n; ++i) {
-        x_analytic_fft[i] = x_hilbert[i] * std::conj(t_fft[i]);
+        x_analytic_fft[i] = x_hilbert_fft[i] * std::conj(t_fft[i]);
     }
 
     return ifft(x_analytic_fft);

@@ -33,7 +33,6 @@ std::vector<std::vector<double>> readAllCSVFiles(const std::string& directoryPat
     for (const auto& entry : fs::directory_iterator(directoryPath))  {
         if (entry.path().extension() == ".csv") {
             if (entry.path().filename().string().find("Flight") != std::string::npos) {
-                // printf("Reading file: %s\n", entry.path().string().c_str());
 
                 // Extract the integer value from the filename
                 std::string filename = entry.path().filename().string();
@@ -46,7 +45,6 @@ std::vector<std::vector<double>> readAllCSVFiles(const std::string& directoryPat
                 std::vector<double> fileData;
                 for (const auto& row : data) {
                     for (const auto& cell : row) {
-                        // Convert the string to a double before printing
                         double number = std::stod(cell);
                         fileData.push_back(number);
                     }
