@@ -1,4 +1,4 @@
-# Beamformer
+# Beamformer++: Beamform an image in less than a second!
 
 ## Requirements
 
