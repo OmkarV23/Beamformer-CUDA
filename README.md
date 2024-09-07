@@ -40,3 +40,9 @@
 * Read it in python using numpy or opencv. Reshape it to (150x150)
 
 * [reconstructed_image.png](reconstructed_image.png)
+
+## Comparison
+
+* Numpy Version: ```111.013301 seconds```
+* Pytorch Version (CUDA Tensors): ```4.952884 seconds```
+* Custom Beamforming CUDA kernel: ```634.817 ms```
