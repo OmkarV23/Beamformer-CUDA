@@ -39,7 +39,7 @@
 
 * Read it in python using numpy or opencv. Reshape it to (150x150)
 
-* [reconstructed_image.png](reconstructed_image.png)
+* ![reconstructed_image.png](reconstructed_image.png)
 
 ## Comparison
 
