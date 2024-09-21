@@ -74,7 +74,7 @@ std::vector<double> correctGroupDelay(const std::vector<double>& wfm, double gd,
 std::vector<double> generate_lfm_signal(double f_start, double f_stop, double fs, double sweep_length, double amp) {
     // Calculate the number of samples
     int num_samples = static_cast<int>(fs * sweep_length);
-    
+
     // Time vector
     std::vector<double> t(num_samples);
     for (int i = 0; i < num_samples; ++i) {

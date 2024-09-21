@@ -35,7 +35,7 @@ const float RADIUS_RX = 0.63;
 const int NUM_PIXELS = 22500;
 
 inline std::string background_dir = "/home/omkar/Desktop/Projetcs/Dome_experiments/2D_data/Test_run_background/2024_08_03-15_43_20";
-inline std::string signal_dir = "/home/omkar/Desktop/Projetcs/Dome_experiments/2D_data/Test_run_360/2024_08_03-16_01_05";;
-inline std::string image_file = "/home/omkar/Desktop/Projetcs/Dome_experiments/output_image.csv";
+inline std::string signal_dir = "/home/omkar/Desktop/Projetcs/Dome_experiments/2D_data/Test_run_360/2024_08_03-16_01_05";
+inline std::string image_file = "/home/omkar/Desktop/Projetcs/Dome_experiments/output_image_wo_bg.csv";
 
 #endif // CIRCLE_COORDINATES_H

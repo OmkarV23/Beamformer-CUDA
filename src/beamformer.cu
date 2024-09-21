@@ -1,11 +1,4 @@
-#include <cuda_runtime.h>
-#include <stdio.h>
-#include <math.h>
-#include <iostream>
-#include <thrust/complex.h>
-#include "auxilary.h"
-#include "_readsignal.h"
-#include "_signalprocessing.h"
+#include "beamformer.cuh"
 
 
 __global__ void beamforming_kernel(double *pixels, double *tx_coords, double *rx_coords, 
@@ -91,6 +84,65 @@ std::vector<std::vector<double>> createPixelSpace(double x_min, double x_max, do
     return pixel_space;
 }
 
+std::vector<std::vector<double>> GenerateSensorCoordinates(double radius, double z) {
+    std::vector<std::vector<double>> sensor_coordinates;
+    for (int i = 0; i < 360; i++) {
+        double theta = (i + 1) * (M_PI / 180.0);
+        double x = radius * cos(theta);
+        double y = radius * sin(theta);
+        sensor_coordinates.push_back({x, y, z});
+    }
+    return sensor_coordinates;
+}
+
+std::vector<std::complex<double>> _beamform_extern(std::vector<double> h_pixels_flat, std::vector<double> h_tx_coords, std::vector<double> h_rx_coords, 
+                                            std::vector<std::complex<double>> h_x_analytic_flat, int num_pixels,
+                                            int num_coords, double c, double Fs, int signal_length) 
+{
+    size_t total_size = h_x_analytic_flat.size();
+
+    std::vector<std::complex<double>> h_output(num_pixels);
+    for (int i = 0; i < num_pixels; i++) {
+        h_output[i] = std::complex<double>(0.0, 0.0);
+    }
+
+    double *d_tx_coords, *d_rx_coords;
+
+    double *d_pixels;
+    thrust::complex<double>* d_output;
+    thrust::complex<double>* d_x_analytic;
+
+    cudaMalloc((void**)&d_pixels, h_pixels_flat.size() * sizeof(double));
+    cudaMalloc((void**)&d_x_analytic, total_size * sizeof(thrust::complex<double>));
+    cudaMalloc((void**)&d_output, num_pixels * sizeof(thrust::complex<double>));
+
+    cudaMalloc((void**)&d_tx_coords, NUM_COORDS * sizeof(TX_INITIAL) * sizeof(double));
+    cudaMalloc((void**)&d_rx_coords, NUM_COORDS * sizeof(RX_INITIAL) * sizeof(double));
+
+    // Copy data from host to device
+    cudaMemcpy(d_pixels, h_pixels_flat.data(), h_pixels_flat.size() * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_output, h_output.data(), num_pixels * sizeof(thrust::complex<double>), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_x_analytic, h_x_analytic_flat.data(), total_size * sizeof(thrust::complex<double>), cudaMemcpyHostToDevice);
+
+    cudaMemcpy(d_tx_coords, h_tx_coords.data(), NUM_COORDS * sizeof(TX_INITIAL) * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_rx_coords, h_rx_coords.data(), NUM_COORDS * sizeof(RX_INITIAL) * sizeof(double), cudaMemcpyHostToDevice);
+
+
+    int blocksPerGrid = (num_pixels + 256 - 1) / 256;
+    beamforming_kernel<<<blocksPerGrid, 256>>>(d_pixels, d_tx_coords, d_rx_coords, 
+                                               d_x_analytic, d_output, num_coords, c, Fs, signal_length);
+
+    cudaMemcpy(h_output.data(), d_output, num_pixels * sizeof(thrust::complex<double>), cudaMemcpyDeviceToHost);
+
+    cudaFree(d_pixels);
+    cudaFree(d_tx_coords);
+    cudaFree(d_rx_coords);
+    cudaFree(d_x_analytic);
+    cudaFree(d_output);
+
+    return h_output;
+
+}
 
 int main() {
 
@@ -100,9 +152,9 @@ int main() {
 
     std::vector<std::vector<double>> signal = readAllCSVFiles(signal_dir);
 
-
     std::vector<std::vector<double>> signal_minus_background = subtractMeanBackground(signal, mean_background);
 
+    // std::vector<std::vector<double>> signal_minus_background = readAllCSVFiles(signal_dir);
 
     std::vector<double> LFM = generate_lfm_signal(F_START, F_STOP, FS, SWEEP_LENGTH, AMP);
 
@@ -161,10 +213,38 @@ int main() {
     cudaMemcpy(d_x_analytic, h_x_analytic_flat.data(), total_size * sizeof(thrust::complex<double>), cudaMemcpyHostToDevice);
 
 
+    // Timing variables
+    cudaEvent_t start, stop;
+    float milliseconds = 0;
+
+    // Create CUDA events for timing
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
+    // Start recording time
+    cudaEventRecord(start);
+    
+
     int blocksPerGrid = (NUM_PIXELS + 256 - 1) / 256;
     beamforming_kernel<<<blocksPerGrid, 256>>>(d_pixels, d_tx_coords, d_rx_coords, 
                                                            d_x_analytic, d_output, NUM_COORDS, 
                                                            SPEED_OF_SOUND, FS, BINS);
+
+    // Stop recording time
+    cudaEventRecord(stop);
+
+    // Synchronize the events to wait for the kernel to finish
+    cudaEventSynchronize(stop);
+
+    // Calculate elapsed time in milliseconds
+    cudaEventElapsedTime(&milliseconds, start, stop);
+
+    // Output the execution time
+    std::cout << "Beamforming kernel execution time: " << milliseconds << " ms" << std::endl;
+
+    // Cleanup CUDA events
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
 
     cudaMemcpy(h_output.data(), d_output, NUM_PIXELS * sizeof(thrust::complex<double>), cudaMemcpyDeviceToHost);
 

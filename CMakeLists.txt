@@ -33,9 +33,9 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath,/usr/lib/gcc/x8
 
 # Add the executable
 add_executable(beamformer 
-    beamformer.cu
-    _readsignal.cpp
-    _signalprocessing.cpp
+    src/beamformer.cu
+    src/_readsignal.cpp
+    src/_signalprocessing.cpp
 )
 
 # Link FFTW3 libraries
