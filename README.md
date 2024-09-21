@@ -41,6 +41,11 @@
 
 * ![reconstructed_image.png](reconstructed_image.png)
 
+## Usage with python3
+
+* In the main folder, run ```python setup.py build_ext --inplace```
+* Example is shown in [fastbeamform.ipynb](fastbeamform.ipynb)
+
 ## Comparison on RTX 4090
 
 * Numpy Version: ```111.013301 seconds```
