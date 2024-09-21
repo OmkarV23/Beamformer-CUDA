@@ -41,7 +41,7 @@
 
 * ![reconstructed_image.png](reconstructed_image.png)
 
-## Comparison
+## Comparison on RTX 4090
 
 * Numpy Version: ```111.013301 seconds```
 * Pytorch Version (CUDA Tensors): ```4.952884 seconds```
