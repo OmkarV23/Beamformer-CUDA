@@ -1,0 +1,21 @@
+Speaker x,0.000000E+0
+Speaker y,0.000000E+0
+Speaker z,0.000000E+0
+Mic1 x,0.000000E+0
+Mic1 y,0.000000E+0
+Mic1 z,0.000000E+0
+Mic2 x,0.000000E+0
+Mic2 y,0.000000E+0
+Mic2 z,0.000000E+0
+Center x,0.000000E+0
+Center y,0.000000E+0
+Center z,0.000000E+0
+Fs,100.000000E+3
+Fstart,10.000000E+3
+Fstop,30.000000E+3
+Vpeak,1.000000E+0
+Duration,1.000000E-3
+Window %,10.000000E+0
+Group Delay,62.300991E+0
+Input Range,0.000000E+0
+Output Range,3.500000E+0
