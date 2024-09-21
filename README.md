@@ -1,4 +1,4 @@
-# Beamformer++: Beamform an image in less than a second!
+# Beamformer++: Beamform an image in less than a second on RTX 4090!
 
 ## Requirements
 
@@ -44,6 +44,7 @@
 ## Usage with python3
 
 * In the main folder, run ```python setup.py build_ext --inplace```
+* In [setup.py](setup.py), look for ```sm``` number and change the number accordingly to your gpu [CUDA compute capability number](https://developer.nvidia.com/cuda-gpus). E.g. 4090 has sm number of 7.5, therefore ```sm_75```.
 * Example is shown in [fastbeamform.ipynb](fastbeamform.ipynb)
 
 ## Comparison on RTX 4090
