@@ -1,39 +1,3 @@
-# from setuptools import setup, Extension
-# import pybind11
-
-# extra_compile_args = ['-std=c++11']
-
-# ext_modules = [
-#     Extension(
-#         'FastBeamformer',
-#         ['src/ext.cpp',
-#          'src/_readsignal.cpp',
-#          'src/_signalprocessing.cpp',
-#          'src/beamformer.cu',],
-#         include_dirs=[pybind11.get_include(),
-#         '/usr/include/boost',
-
-#         ],
-#         library_dirs=[
-#             '/usr/lib',
-#             '/usr/local/lib',
-#         ],
-#         libraries=[
-#             'boost_filesystem',
-#             'boost_system',
-#             'fftw3',
-#         ],
-#         extra_compile_args=extra_compile_args,
-#         language='c++',
-#     ),
-# ]
-
-# setup(
-#     name='FastBeamformer',
-#     ext_modules=ext_modules,
-# )
-
-
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 import subprocess
